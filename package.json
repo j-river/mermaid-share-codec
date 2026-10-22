@@ -1,0 +1,44 @@
+{
+  "name": "mermaid-share-codec",
+  "version": "0.1.0",
+  "description": "Encode and decode Mermaid Live Editor share links in browsers and Node.js, without rendering or network requests.",
+  "type": "module",
+  "license": "MIT",
+  "author": "j-river",
+  "homepage": "https://mermaidonline.org/",
+  "repository": { "type": "git", "url": "git+https://github.com/j-river/mermaid-share-codec.git" },
+  "bugs": { "url": "https://github.com/j-river/mermaid-share-codec/issues" },
+  "keywords": ["mermaid", "share-link", "codec", "pako", "base64url", "typescript"],
+  "engines": { "node": ">=22" },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+      "require": { "types": "./dist/index.d.cts", "default": "./dist/index.cjs" }
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": { "mermaid-share": "./dist/cli.js" },
+  "files": ["dist/index.js", "dist/index.cjs", "dist/index.d.ts", "dist/index.d.cts", "dist/cli.js", "dist/browser.js", "dist/fflate.LICENSE", "README.md", "LICENSE", "CHANGELOG.md"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit && tsc -p tests/types/tsconfig.json --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm run build && npm run typecheck && npm test",
+    "test:package": "node scripts/test-package.mjs",
+    "demo": "node scripts/serve-demo.mjs",
+    "prepack": "npm run build"
+  },
+  "dependencies": { "fflate": "0.8.3" },
+  "devDependencies": {
+    "@types/node": "24.10.0",
+    "esbuild": "0.28.2",
+    "js-base64": "3.7.8",
+    "pako": "2.1.0",
+    "typescript": "5.9.3"
+  },
+  "publishConfig": { "access": "public", "registry": "https://registry.npmjs.org/" }
+}

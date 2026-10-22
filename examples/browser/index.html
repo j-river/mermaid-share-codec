@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mermaid Share Codec · Browser example</title>
+<style>
+  :root{font-family:system-ui,sans-serif;color:#1f2937;background:#f5f5f2}*{box-sizing:border-box}
+  body{max-width:1020px;margin:0 auto;padding:48px 24px}header{margin-bottom:32px}small{letter-spacing:.12em;text-transform:uppercase;color:#47635c}
+  h1{font-size:clamp(28px,5vw,44px);letter-spacing:-.045em;margin:12px 0}p{line-height:1.7;color:#53615d}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}section{background:white;border:1px solid #d9e0db;border-radius:16px;padding:24px;min-width:0}
+  h2{font-size:20px;margin-top:0}label{display:block;font-size:14px;font-weight:600;margin:16px 0 8px}
+  textarea,select{width:100%;padding:12px;border:1px solid #b9c7bf;border-radius:8px;background:#fff;color:#1f2937}
+  textarea{font:13px/1.7 ui-monospace,monospace;resize:vertical;min-height:140px}button{border:0;border-radius:8px;background:#235347;color:white;padding:12px 16px;margin:16px 8px 0 0;font-weight:600;cursor:pointer}
+  button:hover{background:#163e33}button:focus-visible,a:focus-visible{outline:3px solid #c49c41;outline-offset:3px}
+  output{display:block;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:16px;font:13px/1.7 ui-monospace,monospace}
+  a{color:#235347}footer{font-size:13px;margin-top:28px}#status{min-height:28px}a[hidden]{display:none}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}body{padding:28px 16px}}
+</style>
+<body>
+<header><small>Open-source utility · v0.1.0</small><h1>Diagrams travel inside the link.</h1><p>Encode Mermaid source, or recover it from an existing share link. This example runs locally in your browser and does not render or upload your diagram.</p></header>
+<div class="grid">
+<section><h2>Source → share link</h2>
+<label for="source">Mermaid source</label><textarea id="source" spellcheck="false">flowchart LR
+  A[Write] --> B[Share]
+  B --> C[Keep editing]</textarea>
+<label for="target">Open links in</label><select id="target"><option value="https://mermaid.live/edit">Mermaid Live Editor</option><option value="https://mermaidonline.org/">Mermaid Online</option></select>
+<button id="encode">Generate link</button><output id="encoded"></output><p id="length"></p><a id="open" target="_blank" rel="noopener noreferrer" hidden>Open diagram in selected editor ↗</a>
+</section>
+<section><h2>Share link → source</h2><label for="input">HTTP(S) URL, #fragment or token</label><textarea id="input" spellcheck="false" placeholder="https://mermaid.live/edit#pako:…"></textarea>
+<button id="decode">Recover source</button><output id="decoded"></output>
+</section></div>
+<p id="status" role="status" aria-live="polite">Ready. No network requests are needed to encode or decode.</p>
+<footer><p>Compression is not encryption. Anyone with the link can read its contents. Opening a generated link loads the chosen editor, whose scripts can read the fragment.</p><a href="https://mermaidonline.org/" target="_blank" rel="noopener noreferrer">Edit and export diagrams in Mermaid Online ↗</a> · <a href="/tests/browser.html">Run browser compatibility checks</a></footer>
+<script type="module">
+import { createShareUrl, extractCode } from '/dist/browser.js';
+const byId = id => document.getElementById(id);
+byId('encode').addEventListener('click', () => {
+  const link = byId('open'); link.hidden = true; link.removeAttribute('href');
+  byId('encoded').textContent = ''; byId('length').textContent = '';
+  try {
+    const url = createShareUrl({ code: byId('source').value }, { baseUrl: byId('target').value });
+    byId('encoded').textContent = url; byId('input').value = url;
+    byId('length').textContent = `${url.length.toLocaleString()} characters${url.length > 8000 ? ' — long links may exceed limits in other apps.' : ''}`;
+    link.href = url; link.hidden = false;
+    byId('status').textContent = 'Link generated locally. Nothing was uploaded.';
+  } catch (error) { byId('status').textContent = `${error.code ?? 'ERROR'}: ${error.message}`; }
+});
+byId('decode').addEventListener('click', () => {
+  const result = extractCode(byId('input').value);
+  byId('decoded').textContent = result.ok ? result.value : '';
+  byId('status').textContent = result.ok ? 'Source recovered locally. Renderer configuration was not applied.' : `${result.error.code}: ${result.error.message}`;
+});
+</script>
+</body></html>

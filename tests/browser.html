@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Browser compatibility checks</title>
+<body><h1>Browser compatibility checks</h1><p id="summary" role="status">Running…</p><ol id="results"></ol><a href="/">Back to example</a>
+<script type="module">
+import { encodeState, decodeState, createShareUrl, extractCode } from '/dist/browser.js';
+const rows = [];
+const check = (name, fn) => { try { fn(); rows.push({name, ok:true}); } catch(error) { rows.push({name, ok:false, error:error.message}); } };
+const assert = (value) => { if(!value) throw new Error('Assertion failed'); };
+const code = 'flowchart LR\r\n A[开始]-->B[✨]\r\n';
+check('Unicode and CRLF round trip in the browser', () => assert(extractCode(encodeState({code})).value === code));
+check('No Buffer or Node globals needed', () => assert(typeof Buffer === 'undefined' && typeof process === 'undefined'));
+check('Explicit URL target and metadata', () => {
+  const url = createShareUrl({code, mmo:{theme:'docs'}}, {baseUrl:'https://mermaidonline.org/'});
+  assert(decodeState(url).value.mmo.theme === 'docs');
+});
+check('Invalid data has a structured failure', () => assert(decodeState('pako:!!!!').error.code === 'INVALID_BASE64'));
+const fixture = await fetch('/tests/fixtures/official-live.json').then(r => r.json());
+check('Captured official editor link decodes', () => assert(extractCode(fixture.url).value.includes('Christmas')));
+const bomb = await fetch('/tests/fixtures/bomb.json').then(r => r.json());
+check('Small compressed bomb is refused', () => assert(decodeState(bomb.token).error.code === 'OUTPUT_TOO_LARGE'));
+for (const row of rows) { const li = document.createElement('li'); li.textContent = `${row.ok ? 'PASS' : 'FAIL'}: ${row.name}${row.error ? ': '+row.error : ''}`; document.querySelector('#results').append(li); }
+document.querySelector('#summary').textContent = `${rows.filter(r=>r.ok).length}/${rows.length} passed`;
+</script></body></html>
