@@ -16,7 +16,7 @@ for (const file of packed.files) {
 }
 const installDir = await mkdtemp(path.join(root, '.artifacts', 'clean-install-'));
 await writeFile(path.join(installDir, 'package.json'), '{"private":true,"type":"module"}\n');
-npm(['install', path.join(root, '.artifacts', packed.filename), '--ignore-scripts', '--no-audit', '--no-fund'], installDir);
+npm(['install', path.join(root, '.artifacts', packed.filename), '--ignore-scripts', '--registry=https://registry.npmjs.org', '--no-audit', '--no-fund'], installDir);
 for (const [name, source] of [
   ['esm.mjs', `import assert from 'node:assert/strict'; import {encodeState,extractCode} from 'mermaid-share-codec'; assert.equal(extractCode(encodeState({code:'graph TD; A-->B'})).value,'graph TD; A-->B');`],
   ['commonjs.cjs', `const assert=require('node:assert/strict'); const codec=require('mermaid-share-codec'); assert.equal(codec.extractCode(codec.encodeState({code:'graph TD; A-->B'})).value,'graph TD; A-->B');`],
