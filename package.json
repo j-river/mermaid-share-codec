@@ -30,6 +30,9 @@
     "check": "npm run build && npm run typecheck && npm test",
     "test:package": "node scripts/test-package.mjs",
     "demo": "node scripts/serve-demo.mjs",
+    "build:space": "tsc -p space/tsconfig.json && node scripts/build-space.mjs",
+    "test:space": "node scripts/test-space.mjs",
+    "demo:space": "node scripts/serve-space.mjs",
     "prepack": "npm run build"
   },
   "dependencies": { "fflate": "0.8.3" },

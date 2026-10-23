@@ -120,6 +120,27 @@ Input is capped at 512,000 bytes. No files are overwritten.
 
 ## Browser example
 
+### Hosted playground
+
+Try the [live Mermaid Share Lab on Hugging Face](https://huggingface.co/spaces/j-river/mermaid-share-codec).
+
+The [Static Space source](space/) provides synthetic samples, explicit editor
+destinations, exact source round-trip checks, source recovery, decoded JSON and
+copy/download actions. It uses this library entirely in browser memory; source
+and config are shown as text, without rendering or uploading a diagram.
+
+```sh
+npm run build:space
+npm run test:space
+npm run demo:space
+```
+
+Upload only the seven files in `.artifacts/hf-space/`, preserving `assets/`, to
+a Hugging Face Static Space. Keep the included fflate license. The [Space card](space/README.md)
+describes privacy, input limits and the tested scope. npm publication is pending.
+
+### Minimal browser example
+
 ```sh
 npm install --ignore-scripts
 npm run build

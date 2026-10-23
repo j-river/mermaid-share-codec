@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Create Mermaid share links or recover their source. A browser-local playground with round-trip checks, decoded JSON and no API key.">
+  <title>Mermaid Share Lab — A diagram inside a link</title>
+  <link rel="stylesheet" href="./assets/style.css">
+  <script type="module" src="./assets/app.js"></script>
+</head>
+<body>
+  <header class="site-header wrap">
+    <a class="brand" href="https://mermaidonline.org/" target="_blank" rel="noopener noreferrer"><span class="brand-mark" aria-hidden="true">m↗</span> Mermaid Online</a>
+    <nav aria-label="Project links"><a href="https://github.com/j-river/mermaid-share-codec" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a><a href="#how-it-works">How it works</a></nav>
+  </header>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="page-title">
+      <div><p class="eyebrow">MERMAID SHARE LAB / OPEN-SOURCE PLAYGROUND</p><h1 id="page-title">A whole diagram.<br>Inside a <em>link.</em></h1><p class="intro">Make your Mermaid source portable. Create a share link, take one apart, and see exactly what it carries.</p><p class="local-badge"><span aria-hidden="true">●</span> Browser-local · no upload · no API key</p></div>
+      <aside class="hero-note"><span class="note-symbol" aria-hidden="true">↔</span><h2>A codec, with the lid off.</h2><p>This playground encodes and recovers source. Open your result in an editor when you want to render, edit or export the diagram.</p><a href="https://mermaidonline.org/" target="_blank" rel="noopener noreferrer">Explore the Mermaid Online editor ↗</a></aside>
+    </section>
+    <section class="examples" aria-label="Synthetic source examples"><span>START WITH A SAMPLE</span><div class="sample-buttons"><button type="button" data-sample="flowchart" aria-pressed="true">↳ Flowchart</button><button type="button" data-sample="sequence" aria-pressed="false">⇄ Sequence</button><button type="button" data-sample="unicode" aria-pressed="false">文 Unicode</button></div><span class="sample-hint">All samples are synthetic.</span></section>
+    <div class="workspace">
+      <section class="panel" aria-labelledby="encode-title">
+        <div class="panel-heading"><span class="step">01</span><div><p class="eyebrow">PACK IT UP</p><h2 id="encode-title">Source → share link</h2></div><span class="direction" aria-hidden="true">↗</span></div>
+        <label for="source">Mermaid source</label><textarea id="source" maxlength="100000" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+        <div class="select-grid"><div><label for="target">Destination editor</label><select id="target"><option value="https://mermaidonline.org/">Mermaid Online</option><option value="https://mermaid.live/edit">Mermaid Live Editor</option></select></div><div><label for="theme">Theme data</label><select id="theme"><option value="default">Default</option><option value="dark">Dark</option><option value="neutral">Neutral</option></select></div></div>
+        <button class="primary" id="encode" type="button">Create share link <span aria-hidden="true">↗</span></button>
+        <p id="encode-status" class="status" role="status" aria-live="polite">Preparing the local example…</p>
+        <div class="result" id="encode-result" hidden><label for="share-url">Generated URL</label><textarea id="share-url" readonly spellcheck="false"></textarea><dl class="metrics"><div><dt>Source UTF-8</dt><dd id="source-bytes">—</dd></div><div><dt>URL characters</dt><dd id="url-chars">—</dd></div><div><dt>Round trip</dt><dd id="roundtrip">—</dd></div></dl><div class="actions"><button id="copy-url" type="button">Copy link</button><button id="try-link" type="button">Inspect this link →</button></div><a id="open-editor" class="editor-link" target="_blank" rel="noopener noreferrer" hidden>Open in selected editor ↗</a><p id="length-note" class="fine-print"></p></div>
+      </section>
+      <section class="panel decode-panel" aria-labelledby="decode-title">
+        <div class="panel-heading"><span class="step">02</span><div><p class="eyebrow">LOOK INSIDE</p><h2 id="decode-title">Share link → source</h2></div><span class="direction" aria-hidden="true">↙</span></div>
+        <label for="share-input">A URL, #fragment or token</label><textarea id="share-input" maxlength="104097" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="https://mermaid.live/edit#pako:…"></textarea><p class="input-help">Reads <code>pako:</code> and <code>base64:</code> state. Pasted URLs are decoded locally; they are never fetched.</p>
+        <button class="primary secondary-primary" id="decode" type="button">Recover source <span aria-hidden="true">↓</span></button>
+        <p id="decode-status" class="status" role="status" aria-live="polite">Try “Inspect this link”, or paste a supported share link.</p>
+        <div class="result" id="decode-result" hidden><label for="recovered-source">Recovered source</label><textarea id="recovered-source" readonly spellcheck="false"></textarea><div class="actions"><button id="copy-source" type="button">Copy source</button><button id="download-source" type="button">Download .mmd</button><button id="use-source" type="button">Use as input ↖</button></div><details><summary>Inspect the full decoded JSON</summary><pre id="decoded-json"></pre></details><p class="fine-print">Source and configuration are displayed as text. They are not rendered or executed here.</p></div>
+      </section>
+    </div>
+    <section id="how-it-works" class="explanation" aria-labelledby="format-title"><div><p class="eyebrow">THE FORMAT, NOT MAGIC</p><h2 id="format-title">Source in. A fragment out.</h2><p>A <code>pako:</code> link carries a JSON state with your code. Compression makes it smaller; Base64URL makes the compressed bytes portable in a URL fragment.</p></div><ol class="pipeline"><li><span>01</span><strong>JSON state</strong><code>code + config</code></li><li><span>02</span><strong>zlib</strong><code>DEFLATE bytes</code></li><li><span>03</span><strong>Base64URL</strong><code>URL-safe text</code></li><li><span>04</span><strong>#pako:…</strong><code>share fragment</code></li></ol></section>
+    <div class="notes-grid"><section><h2>Share deliberately.</h2><p>A share link contains the source. Compression is not encryption, and the link cannot be revoked. Opening it gives the chosen editor access to the fragment. Only open or share source you intend that destination to receive.</p></section><section><h2>Know the boundaries.</h2><p>This is a source codec, not a Mermaid parser or renderer. It does not check diagram syntax or promise compatibility with every editor. Unsupported formats and damaged data return an error.</p><p class="fine-print">UI source limit: 100,000 characters. Codec limits: 100,000 token characters, 512,000 uncompressed JSON bytes, 32 container levels. Link length limits vary by destination.</p></section></div>
+    <section class="next-step"><div><p class="eyebrow">KEEP GOING</p><h2>Ready to see the diagram?</h2><p>Use the editor to preview Mermaid, refine its source and export an image. The open-source codec is available separately for your own app.</p></div><div class="next-links"><a href="https://mermaidonline.org/" target="_blank" rel="noopener noreferrer">Edit & export in Mermaid Online ↗</a><a href="https://github.com/j-river/mermaid-share-codec" target="_blank" rel="noopener noreferrer">Read the library documentation ↗</a></div></section>
+  </main>
+  <footer class="wrap"><span>mermaid-share-codec · MIT licensed · independent project</span><span>No analytics, uploads or persistent storage. Hosting providers may log page requests.</span><a href="./assets/fflate.LICENSE">fflate license</a></footer>
+  <noscript>This playground needs JavaScript to encode and decode locally. No server-side processing is used.</noscript>
+</body>
+</html>
