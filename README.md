@@ -4,20 +4,23 @@ Encode and decode Mermaid Live Editor share links in browsers and Node.js.
 Recover diagram source from a URL, or add sharing to your own tool without
 loading Mermaid, React, or a rendering service.
 
-**npm release candidate:** Registry publication is pending. After `npm install`
-and `npm run check` in this source directory, use `npm pack` to create a local
-installable tarball, or run the examples below. The registry installation
-command becomes available after the first public release.
+**Not on npm yet.** Run it from a clone (below), or build a local tarball with
+`npm pack` and install that.
 
 Need an editor rather than a library? [Mermaid Online](https://mermaidonline.org/)
-lets you edit diagrams and export image files in your browser.
+lets you edit diagrams in your browser and export them as
+[PNG](https://mermaidonline.org/mermaid-to-png) or [SVG](https://mermaidonline.org/mermaid-to-svg).
 
 ## Install and use
 
 Node.js 22 or later; modern browsers with ES modules, TextEncoder and TextDecoder.
 
 ```sh
-npm install mermaid-share-codec
+git clone https://github.com/j-river/mermaid-share-codec.git
+cd mermaid-share-codec
+npm ci --ignore-scripts
+npm run check
+npm pack   # then: npm install /path/to/mermaid-share-codec-<version>.tgz
 ```
 
 ```ts
@@ -137,7 +140,7 @@ npm run demo:space
 
 Upload only the seven files in `.artifacts/hf-space/`, preserving `assets/`, to
 a Hugging Face Static Space. Keep the included fflate license. The [Space card](space/README.md)
-describes privacy, input limits and the tested scope. npm publication is pending.
+describes privacy, input limits and the tested scope.
 
 ### Minimal browser example
 
@@ -195,10 +198,6 @@ decompression, Unicode, CLI behavior, CJS/ESM and type resolution. The package
 check installs the actual tarball in a clean temporary project and runs its
 API and CLI. CI is configured for Node 22/24 on Linux and Windows; check the
 actual CI run before interpreting a configured matrix as passing evidence.
-
-Mermaid Online's existing share module is the integration target; deployment
-of this extracted package is pending. Integration is not a claim that other
-sites endorse this project.
 
 ## License
 
