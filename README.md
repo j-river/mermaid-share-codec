@@ -4,9 +4,6 @@ Encode and decode Mermaid Live Editor share links in browsers and Node.js.
 Recover diagram source from a URL, or add sharing to your own tool without
 loading Mermaid, React, or a rendering service.
 
-**Not on npm yet.** Run it from a clone (below), or build a local tarball with
-`npm pack` and install that.
-
 Need an editor rather than a library? [Mermaid Online](https://mermaidonline.org/)
 lets you edit diagrams in your browser and export them as
 [PNG](https://mermaidonline.org/mermaid-to-png) or [SVG](https://mermaidonline.org/mermaid-to-svg).
@@ -16,11 +13,7 @@ lets you edit diagrams in your browser and export them as
 Node.js 22 or later; modern browsers with ES modules, TextEncoder and TextDecoder.
 
 ```sh
-git clone https://github.com/j-river/mermaid-share-codec.git
-cd mermaid-share-codec
-npm ci --ignore-scripts
-npm run check
-npm pack   # then: npm install /path/to/mermaid-share-codec-<version>.tgz
+npm install mermaid-share-codec
 ```
 
 ```ts
