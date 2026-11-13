@@ -1,5 +1,7 @@
 # mermaid-share-codec
 
+[中文快速开始](README.zh-CN.md)
+
 Encode and decode Mermaid Live Editor share links in browsers and Node.js.
 Recover diagram source from a URL, or add sharing to your own tool without
 loading Mermaid, React, or a rendering service.
